@@ -1,12 +1,23 @@
-import {Request, Response} from "express";
-import { StudentServices} from "./student.service";
-import studentValidationSchema from "./student.zod.validation";
-
-
-
-const createStudent = async (req: Request, res: Response) => {
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StudentControllers = void 0;
+const student_service_1 = require("./student.service");
+const student_zod_validation_1 = __importDefault(require("./student.zod.validation"));
+const createStudent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // "@ts-expect-error
-    try{
+    try {
         // TODO: creating a schema validation using joi
         // const JoivalidationSchema = Joi.object({
         //     id: Joi.string().required(),
@@ -18,8 +29,6 @@ const createStudent = async (req: Request, res: Response) => {
         //     email: Joi.string().email().required(),
         //     gender: Joi.string().required().valid(["male", "female", "other"])
         // })
-
-
         // TODO: creating a schema validation using Zod
         // const studentValidationSchema = z.object({
         //     id: z.string(),
@@ -27,22 +36,15 @@ const createStudent = async (req: Request, res: Response) => {
         //         firstName: z.string().max(20, { message: "First name must be at least 20 characters"})
         //     })
         // })
-
-
-
-        const { student : studentData} = req.body;
-
+        const { student: studentData } = req.body;
         // TODO:  data validation using joi
         //const {value, error} = studentValidationSchema.validate(studentData)
         //console.log(value, error)
-
         // TODO:  data validation using zod
-        const zodparseddata = await studentValidationSchema.parse(studentData);
+        const zodparseddata = yield student_zod_validation_1.default.parse(studentData);
         // studentValidationSchema
-
         // will call service function
-        const result = await StudentServices.createStudentIntoDB(zodparseddata);
-
+        const result = yield student_service_1.StudentServices.createStudentIntoDB(zodparseddata);
         // if (error){
         //     res.status(500).json({
         //         success: false,
@@ -50,8 +52,6 @@ const createStudent = async (req: Request, res: Response) => {
         //         error: error.details
         //     })
         // }
-
-
         //send res
         console.log(result);
         res.status(200).json({
@@ -59,7 +59,8 @@ const createStudent = async (req: Request, res: Response) => {
             message: "Student created successfully",
             data: studentData
         });
-    }catch(err: unknown){
+    }
+    catch (err) {
         console.log(typeof err);
         res.status(500).json({
             success: false,
@@ -67,19 +68,18 @@ const createStudent = async (req: Request, res: Response) => {
             error: err
         });
     }
-};
-
-const getAllStudents = async (req: Request, res: Response) => {
-    try{
-        const result = await StudentServices.getAllStudentsFromDB();
+});
+const getAllStudents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield student_service_1.StudentServices.getAllStudentsFromDB();
         //send res
         res.status(200).json({
             success: true,
             message: "Students are retrieved successfully",
             data: result
         });
-
-    }catch (err : unknown){
+    }
+    catch (err) {
         console.log(err);
         res.status(500).json({
             success: false,
@@ -87,24 +87,19 @@ const getAllStudents = async (req: Request, res: Response) => {
             error: err
         });
     }
-};
-
-
-
-const getSingleStudent = async (req: Request, res: Response) => {
-    try{
-
-        const studentId: string = req.params.studentId;
-
-        const result = await StudentServices.getSingleStudentFromDB(studentId);
+});
+const getSingleStudent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const studentId = req.params.studentId;
+        const result = yield student_service_1.StudentServices.getSingleStudentFromDB(studentId);
         //send res
         res.status(200).json({
             success: true,
             message: "Student is retrieved successfully",
             data: result
         });
-
-    }catch (err){
+    }
+    catch (err) {
         console.log(err);
         res.status(500).json({
             success: false,
@@ -112,23 +107,19 @@ const getSingleStudent = async (req: Request, res: Response) => {
             error: err
         });
     }
-};
-
-
-const deleteSingleStudent = async (req: Request, res: Response) => {
-    try{
-
-        const studentId: string = req.params.studentId;
-
-        const result = await StudentServices.deleteSingleStudentFromDB(studentId);
+});
+const deleteSingleStudent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const studentId = req.params.studentId;
+        const result = yield student_service_1.StudentServices.deleteSingleStudentFromDB(studentId);
         //send res
         res.status(200).json({
             success: true,
             message: "Student is deleted successfully",
             data: result
         });
-
-    }catch (err){
+    }
+    catch (err) {
         console.log(err);
         res.status(500).json({
             success: false,
@@ -136,10 +127,8 @@ const deleteSingleStudent = async (req: Request, res: Response) => {
             error: err
         });
     }
-};
-
-
-export const StudentControllers = {
+});
+exports.StudentControllers = {
     createStudent,
     getAllStudents,
     getSingleStudent,
