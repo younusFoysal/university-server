@@ -2,23 +2,23 @@ import {TStudent} from "./student.interface";
 import {Student} from "./student.model";
 
 
-const createStudentIntoDB = async (studentdata: TStudent) => {
-
-    if (await Student.isUserExist(studentdata.id)) {
-        throw new Error("Student already exists");
-    }
-    const result =  await Student.create(studentdata); // build in static method of mongoose
-
-
-    // const student = new Student(studentdata) // create an instance
-    // if (await student.isUserExist(studentdata.id)) {
-    //     throw new Error("Student already exists")
-    // }
-
-
-    //const result = await student.save() // build in instance method
-    return result;
-};
+// const createStudentIntoDB = async (studentdata: TStudent) => {
+//
+//     if (await Student.isUserExist(studentdata.id)) {
+//         throw new Error("Student already exists");
+//     }
+//     const result =  await Student.create(studentdata); // build in static method of mongoose
+//
+//
+//     // const student = new Student(studentdata) // create an instance
+//     // if (await student.isUserExist(studentdata.id)) {
+//     //     throw new Error("Student already exists")
+//     // }
+//
+//
+//     //const result = await student.save() // build in instance method
+//     return result;
+// };
 
 const getAllStudentsFromDB = async () => {
     const result = await Student.find();
@@ -41,7 +41,6 @@ const deleteSingleStudentFromDB = async (id:string) => {
 };
 
 export const StudentServices = {
-    createStudentIntoDB,
     getAllStudentsFromDB,
     getSingleStudentFromDB,
     deleteSingleStudentFromDB

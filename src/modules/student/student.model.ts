@@ -12,27 +12,27 @@ const userNameSchema = new Schema<TUserName, StudentModel>({
         required: [true, "First name is required"],
         trim: true,
         maxLength: [20, "Name can not be longer than 20"],
-        validate: {
-            validator: function (value: string) {
-                console.log(value);
-                const firstName: string = value.charAt(0).toUpperCase() + value.slice(1);
-                if ( value !== firstName){
-                    return false;
-                }
-                return true;
-
-            },
-            message: '{VALUE} is not capitalize format'
-        }
+        // validate: {
+        //     validator: function (value: string) {
+        //         //console.log(value);
+        //         const firstName: string = value.charAt(0).toUpperCase() + value.slice(1);
+        //         if ( value !== firstName){
+        //             return false;
+        //         }
+        //         return true;
+        //
+        //     },
+        //     message: '{VALUE} is not capitalize format'
+        // }
     },
     middleName: { type: String,},
     lastName: {
         type: String,
         required: true,
-        validate: {
-            validator: (value: string) => validator.isAlpha(value),
-            message: '{VALUE} is not alphanumeric'
-        }
+        // validate: {
+        //     validator: (value: string) => validator.isAlpha(value),
+        //     message: '{VALUE} is not alphanumeric'
+        // }
     }
 });
 
@@ -56,7 +56,12 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 
 const studentSchema = new Schema<TStudent, StudentModel>({
     id: {type: String , required: true, unique: true},
-    password: {type: String , required: true, maxLength: [20, "Password length can not be longer than 20"],},
+    user: {
+        type: Schema.Types.ObjectId,
+        required: [true, 'User ID is required'],
+        unique: true,
+        ref: "User",
+    },
     name: {
         type: userNameSchema,
         required: true,
@@ -96,11 +101,6 @@ const studentSchema = new Schema<TStudent, StudentModel>({
         required: true,
     },
     profileImg: { type: String },
-    isActive:  {
-        type: String,
-        enum: ["active", "blocked"],
-        default: "active",
-    },
     isDeleted: {
         type: Boolean,
         default: false,
@@ -115,23 +115,23 @@ studentSchema.virtual('fullName').get(function () {
 });
 
 // pre save middleware or hook : will work on create() save()
-studentSchema.pre('save', async function (next){
-    //console.log(this, 'pre hook : we will save data');
-    //const user = this;
-    // hashing password and save into DB
-    this.password = await bcrypt.hash(this.password, Number(config.bcrypt_salt_rounds));
-    // user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds));
-
-    next();
-});
+// studentSchema.pre('save', async function (next){
+//     //console.log(this, 'pre hook : we will save data');
+//     //const user = this;
+//     // hashing password and save into DB
+//     this.password = await bcrypt.hash(this.password, Number(config.bcrypt_salt_rounds));
+//     // user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds));
+//
+//     next();
+// });
 
 // post save middleware or hook
-studentSchema.post('save', function (doc, next){
-
-    doc.password='';
-    next();
-    console.log(this, 'post hook : we saved our data');
-});
+// studentSchema.post('save', function (doc, next){
+//
+//     doc.password='';
+//     next();
+//     console.log(this, 'post hook : we saved our data');
+// });
 
 
 // TODO: Query Middleware
@@ -153,8 +153,8 @@ studentSchema.pre('aggregate', function (next){
 
 // creating a custom static method
 studentSchema.statics.isUserExist = async function (id: string){
-    const extingUser = await Student.findOne({id});
-    return extingUser;
+    const existingUser  = await Student.findOne({id});
+    return existingUser;
 };
 
 

@@ -1,6 +1,9 @@
-import express, {Application, Request, Response} from "express";
+import express, {Application, NextFunction, Request, Response} from "express";
 import cors from 'cors';
-import {StudentRoutes} from "./modules/student/student.route";
+import globalErrorhandler from "./app/middlwares/globalErrorhandler";
+import notFound from "./app/middlwares/notFound";
+import router from "./app/routes";
+
 const app : Application = express();
 
 //parsers
@@ -10,15 +13,23 @@ app.use(cors());
 
 
 // application routes
-app.use('/api/v1/students', StudentRoutes); // /api/v1/students/create-student
+app.use('/api/v1', router);
 
 
-const getAController = (req: Request, res: Response) => {
+const test = (req: Request, res: Response) => {
     const a = "Hello World";
     res.send(a);
 };
 
-app.get('/', getAController);
+app.get('/', test);
+
+
+// @ts-ignore
+app.use(globalErrorhandler)
+
+// Not Found
+// @ts-ignore
+app.use(notFound)
 
 // console.log(process.cwd())
 // npm install eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin --save-dev
