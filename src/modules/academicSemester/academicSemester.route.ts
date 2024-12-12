@@ -14,7 +14,24 @@ const router = express.Router();
 
 
 // @ts-ignore
-router.post('/create-academic-semester', validateRequest(AcademicSemesterValidations.createAcademicSemesterValidationSchema),
-    AcademicSemesterControllers.createAcademicSemester)
+router.post('/create-academic-semester', validateRequest(
+        AcademicSemesterValidations.createAcdemicSemesterValidationSchema,
+    ),
+    AcademicSemesterControllers.createAcademicSemester,
+);
+
+router.get(
+    '/:semesterId',
+    AcademicSemesterControllers.getSingleAcademicSemester,
+);
+
+// @ts-ignore
+router.patch('/:semesterId', validateRequest( AcademicSemesterValidations.updateAcademicSemesterValidationSchema,
+    ),
+    AcademicSemesterControllers.updateAcademicSemester,
+);
+
+router.get('/', AcademicSemesterControllers.getAllAcademicSemesters);
+
 
 export const AcademicSemesterRouter =  router;

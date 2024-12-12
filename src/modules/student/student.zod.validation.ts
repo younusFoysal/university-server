@@ -64,6 +64,7 @@ export const createStudentValidationSchema = z.object({
             permanentAddress: z.string().nonempty("Permanent address is required"),
             guardian: guardianValidationSchema,
             localGuardian: localGuardianValidationSchema,
+            admissionSemester: z.string(),
             profileImg: z.string().optional(),
         })
     })
