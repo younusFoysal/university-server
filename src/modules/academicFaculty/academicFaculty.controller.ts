@@ -2,12 +2,12 @@ import catchAsync from "../../app/utils/catchAsync";
 import sendResponse from "../../app/utils/sendResponse";
 // @ts-ignore
 import httpStatus from "http-status";
-import {AcademicSemesterServices} from "./academicFaculty.service";
+import {AcademicFacultyServices} from "./academicFaculty.service";
 
 
 const createAcademicFaculty = catchAsync(async (req, res) => {
     // const {password,  student: studentData} = req.body;
-    const result = await AcademicSemesterServices.createAcademicFacultyIntoDB(req.body);
+    const result = await AcademicFacultyServices.createAcademicFacultyIntoDB(req.body);
 
 
     sendResponse(res, {
@@ -19,7 +19,7 @@ const createAcademicFaculty = catchAsync(async (req, res) => {
 })
 
 const getAllAcademicFaculties = catchAsync(async (req, res) => {
-    const result = await AcademicSemesterServices.getAllAcademicFacultiesFromDB();
+    const result = await AcademicFacultyServices.getAllAcademicFacultiesFromDB();
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -32,7 +32,7 @@ const getAllAcademicFaculties = catchAsync(async (req, res) => {
 const getSingleAcademicFaculty = catchAsync(async (req, res) => {
     const { facultyId } = req.params;
     const result =
-        await AcademicSemesterServices.getSingleAcademicFacultyFromDB(facultyId);
+        await AcademicFacultyServices.getSingleAcademicFacultyFromDB(facultyId);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -44,7 +44,7 @@ const getSingleAcademicFaculty = catchAsync(async (req, res) => {
 
 const updateAcademicFaculty = catchAsync(async (req, res) => {
     const { facultyId } = req.params;
-    const result = await AcademicSemesterServices.updateAcademicFacultyIntoDB(
+    const result = await AcademicFacultyServices.updateAcademicFacultyIntoDB(
         facultyId,
         req.body,
     );
