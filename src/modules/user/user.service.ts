@@ -6,6 +6,10 @@ import { TUser} from "./user.interface";
 import {TAcademicSemester} from "../academicSemester/academicSemester.interface";
 import {AcademicSemester} from "../academicSemester/academicSemester.model";
 import {generateStudentId} from "./user.utils";
+import mongoose from "mongoose";
+import AppError from "../../app/errors/AppError";
+// @ts-ignore
+import httpStatus from "http-status";
 
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
@@ -19,34 +23,61 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     // set student role
     userData.role = 'student'
 
-
-
-
-
     // find academic info
     const admissionSemester = await AcademicSemester.findById(payload.admissionSemester)
 
-    // @ts-ignore
-    userData.id = await generateStudentId(admissionSemester)
 
-    console.log("udatas",userData);
 
-    // create a user
-    const newUser =  await User.create(userData); // build in static method of mongoose
+    const session = await mongoose.startSession()
 
-    console.log("newUser OK");
-    // create a student
-    if (Object.keys(newUser).length){
+    try {
 
-        // set id, _id as user
-        payload.id = newUser.id;
-        payload.user = newUser._id; // reference _id
-        console.log("studentData OK")
+        session.startTransaction()
 
-        const newStudent = await Student.create(payload);
-        console.log("newStudent OK");
-        return newStudent
+        // @ts-ignore
+        userData.id = await generateStudentId(admissionSemester)
+
+        console.log("udatas",userData);
+
+        // create a user (Transion -1 )
+        const newUser =  await User.create([userData], {session}); // build in static method of mongoose
+
+        console.log("newUser OK");
+        // create a student
+        if (!newUser.length){
+
+            throw new AppError(httpStatus.BAD_REQUEST, 'FAiled to create user')
+        }
+
+
+            // set id, _id as user
+            payload.id = newUser[0].id;
+            payload.user = newUser[0]._id; // reference _id
+            console.log("studentData OK")
+
+            // (Transion - 2 )
+            const newStudent = await Student.create([payload], {session});
+
+            if (!newStudent.length){
+                throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student')
+            }
+
+            await session.commitTransaction()
+            await session.endSession()
+
+            console.log("newStudent OK");
+            return newStudent
+
+
+    } catch (err) {
+
+        await session.abortTransaction()
+        await session.endSession()
+
     }
+
+
+
 
 };
 
