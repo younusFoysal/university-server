@@ -70,7 +70,31 @@ export const createStudentValidationSchema = z.object({
     })
 })
 
+export const updateStudentValidationSchema = z.object({
+    body:  z.object({
+        student: z.object({
+            name: userNameValidationSchema.optional(),
+            gender: z.enum(["male", "female", "other"], {
+                errorMap: () => ({ message: "Gender must be one of 'male', 'female', or 'other'" }),
+            }).optional(),
+            dateOfBirth: z.string().optional(),
+            email: z
+               .string()
+               .email("Invalid email format")
+               .optional(),
+            contactNo: z.string().optional(),
+            emergencyContactNo: z.string().optional(),
+            bloodGroup: z.enum(['A+' , "AB+" , "B+" , "O+" , "A-" , "AB-" , "B-" , "O-"]).optional(),
+            presentAddress: z.string().optional(),
+            permanentAddress: z.string().optional(),
+            guardian: guardianValidationSchema.optional(),
+            localGuardian: localGuardianValidationSchema.optional(),
+        })
+    })
+})
+
 
 export const studentValidationSchemas = {
-    createStudentValidationSchema
+    createStudentValidationSchema,
+    updateStudentValidationSchema
 };
